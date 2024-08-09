@@ -10,8 +10,11 @@ dotnet_diagnostic.CA1848.severity = none
 # so a lot of classes might seem that they have not been instantiated.
 dotnet_diagnostic.CA1812.severity = none
 
-# CA1014: Mark assemblies with CLSCompliant
-# We do not care about that in this project
+# CA1014: We don't care since this is not a public library
 dotnet_diagnostic.CA1014.severity = none
 
-dotnet_diagnostic.CA1822.severity = none
+# CS1591 - We do not care about XML comments, since this is not a library.
+dotnet_diagnostic.CS1591.severity = none
+
+# IDE0005: We do not want unused usings.
+dotnet_diagnostic.IDE0005.severity = warning
