@@ -1,13 +1,12 @@
-﻿using Microsoft.Extensions.Logging;
-
-namespace OpenFTTH.Reporting;
+﻿namespace OpenFTTH.Reporting;
 
 internal static class Program
 {
-    public static void Main()
+    public static async Task Main()
     {
         var settings = AppSetting.Load<Setting>();
         var logger = LoggerFactory.Create("Reporting");
-        logger.LogInformation("Hello, World!");
+        var startUp = new StartUp(logger, settings);
+        await startUp.StartAsync().ConfigureAwait(false);
     }
 }
