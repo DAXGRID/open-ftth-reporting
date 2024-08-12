@@ -1,9 +1,12 @@
-﻿namespace OpenFTTH.Reporting;
+﻿using Microsoft.Extensions.Logging;
+
+namespace OpenFTTH.Reporting;
 
 internal static class Program
 {
     public static void Main()
     {
-        Console.WriteLine("Hello, World!");
+        var logger = LoggerFactory.Create("Reporting");
+        logger.LogInformation("Hello, World!");
     }
 }
