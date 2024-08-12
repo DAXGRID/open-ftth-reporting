@@ -18,3 +18,6 @@ dotnet_diagnostic.CS1591.severity = none
 
 # IDE0005: We do not want unused usings.
 dotnet_diagnostic.IDE0005.severity = warning
+
+# CA2234: We don't care since we most often will use BaseAddress for HttpClient
+dotnet_diagnostic.CA2234.severity = none
