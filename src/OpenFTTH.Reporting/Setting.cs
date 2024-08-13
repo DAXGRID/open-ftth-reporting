@@ -10,8 +10,8 @@ internal sealed record Setting
     [JsonPropertyName("clientSecret")]
     public required string ClientSecret { get; init; }
 
-    [JsonPropertyName("endPointGraphQL")]
-    public required string EndPointGraphQL { get; init; }
+    [JsonPropertyName("reportApiBaseAddress")]
+    public required string ReportApiBaseAddress { get; init; }
 
     [JsonPropertyName("tokenEndpoint")]
     public required string TokenEndpoint { get; init; }

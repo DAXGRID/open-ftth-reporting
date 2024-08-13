@@ -1,6 +1,5 @@
 using System.Globalization;
 using System.IO.Compression;
-using GraphQL;
 using Microsoft.Extensions.Logging;
 using OpenFTTH.Reporting.FileServer;
 
@@ -19,52 +18,47 @@ internal sealed class StartUp
 
     public async Task StartAsync()
     {
+        _logger.LogInformation("Getting reports.");
+
         using var httpClient = new HttpClient()
         {
-            BaseAddress = new Uri(_setting.EndPointGraphQL)
+            BaseAddress = new Uri(_setting.ReportApiBaseAddress)
         };
 
-        using var authGraphQLClient = new AuthGraphQLClient(
-            httpClient,
-            new(_setting.ClientId, _setting.ClientSecret, _setting.TokenEndpoint)
-        );
-
-        var request = new GraphQLRequest
-        {
-            Query = @"
-            query {
-              reporting {
-                customerTerminationTrace
-              }
-            }",
-        };
-
-        var response = await authGraphQLClient
-            .Request<ReportingResponse>(request)
+        var response = await httpClient
+            .GetAsync(
+                "/api/Report/CustomerTerminationReport",
+                HttpCompletionOption.ResponseHeadersRead)
             .ConfigureAwait(false);
 
-        var csvFilePath = $"{Path.GetTempPath()}/openftth_ny_trace.csv";
-        using StreamWriter csvFile = new(csvFilePath);
+        response.EnsureSuccessStatusCode();
 
-        foreach (var customerTerminationTrace in response.Data.Reporting.CustomerTerminationTrace)
+        var fileDateName = $"{DateTime.Now.ToString("dd_MM_yyyy", CultureInfo.InvariantCulture)}";
+
+        var csvFilePath = $"{Path.GetTempPath()}trace_installations_{fileDateName}.csv";
+
+        _logger.LogInformation("Got the report, starts writing file to {FilePath}.", csvFilePath);
+
+        using (var fileStream = new FileStream(csvFilePath, FileMode.Create, FileAccess.Write, FileShare.None))
         {
-            await csvFile.WriteLineAsync(customerTerminationTrace).ConfigureAwait(false);
+            using (Stream responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+            {
+                await responseStream.CopyToAsync(fileStream).ConfigureAwait(false);
+            }
         }
 
-        csvFile.Close();
-
-        var zipFilePath = $"{Path.GetTempPath()}/report_{DateTime.Now.ToString("dd_MM_yyyy", CultureInfo.InvariantCulture)}";
+        var zipFilePath = $"{Path.GetTempPath()}report_{fileDateName}.zip";
 
         _logger.LogInformation(
             "Zipping {CsvFilePath} into name {ZipName}.",
             csvFilePath,
             zipFilePath);
 
-        ZipFile.CreateFromDirectory(
-            csvFilePath,
-            zipFilePath,
-            CompressionLevel.SmallestSize,
-            false);
+        using (var fs = new FileStream(zipFilePath,FileMode.Create))
+        using (var arch = new ZipArchive(fs, ZipArchiveMode.Create))
+        {
+            arch.CreateEntryFromFile(csvFilePath, Path.GetFileName(csvFilePath));
+        }
 
         using var httpClientHandler = new HttpClientHandler
         {
