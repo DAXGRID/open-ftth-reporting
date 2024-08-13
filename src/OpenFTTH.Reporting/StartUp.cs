@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.IO.Compression;
+using System.Net.Http.Headers;
 using Microsoft.Extensions.Logging;
 using OpenFTTH.Reporting.FileServer;
 
@@ -20,12 +21,24 @@ internal sealed class StartUp
     {
         _logger.LogInformation("Getting reports.");
 
-        using var httpClient = new HttpClient()
+        using var authHttpClient = new HttpClient();
+
+        var token = await Auth.GetTokenAsync(
+            authHttpClient,
+            new Uri(_setting.TokenEndpoint),
+            _setting.ClientId,
+            _setting.ClientSecret
+        ).ConfigureAwait(false);
+
+        using var reportApiHttpClient = new HttpClient()
         {
             BaseAddress = new Uri(_setting.ReportApiBaseAddress)
         };
 
-        var response = await httpClient
+        reportApiHttpClient.DefaultRequestHeaders.Authorization
+            = new AuthenticationHeaderValue("Bearer", token.AccessToken);
+
+        var response = await reportApiHttpClient
             .GetAsync(
                 "/api/Report/CustomerTerminationReport",
                 HttpCompletionOption.ResponseHeadersRead)
