@@ -60,7 +60,7 @@ internal sealed class StartUp
             }
         }
 
-        var zipFilePath = $"{Path.GetTempPath()}report_{fileDateName}.zip";
+        var zipFilePath = $"{Path.GetTempPath()}trace_installations_{fileDateName}.zip";
 
         _logger.LogInformation(
             "Zipping {CsvFilePath} into name {ZipName}.",
