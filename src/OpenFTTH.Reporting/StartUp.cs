@@ -47,8 +47,9 @@ internal sealed class StartUp
         response.EnsureSuccessStatusCode();
 
         var fileDateName = $"{DateTime.Now.ToString("dd_MM_yyyy", CultureInfo.InvariantCulture)}";
+        const string traceInstallationsReportFileName = "trace_installations";
 
-        var csvFilePath = $"{Path.GetTempPath()}trace_installations_{fileDateName}.csv";
+        var csvFilePath = $"{Path.GetTempPath()}{traceInstallationsReportFileName}_{fileDateName}.csv";
 
         _logger.LogInformation("Got the report, starts writing file to {FilePath}.", csvFilePath);
 
@@ -60,7 +61,7 @@ internal sealed class StartUp
             }
         }
 
-        var zipFilePath = $"{Path.GetTempPath()}trace_installations_{fileDateName}.zip";
+        var zipFilePath = $"{Path.GetTempPath()}{traceInstallationsReportFileName}_{fileDateName}.zip";
 
         _logger.LogInformation(
             "Zipping {CsvFilePath} into name {ZipName}.",
@@ -110,7 +111,9 @@ internal sealed class StartUp
             .ConfigureAwait(false);
 
         // We only want to keep the 3 newest reports.
-        foreach (var file in files.OrderBy(x => x.Created).Take(files.Count() - 3))
+        foreach (var file in files
+                 .Where(x => x.Name.StartsWith(traceInstallationsReportFileName, false, CultureInfo.InvariantCulture))
+                 .OrderBy(x => x.Created).Take(files.Count() - 3))
         {
             _logger.LogInformation("Cleanup old reporting files {FileName}.", file.Name);
             await httpFileServer
