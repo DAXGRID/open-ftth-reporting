@@ -110,12 +110,12 @@ internal sealed class StartUp
             .ListFiles(_setting.UploadPath)
             .ConfigureAwait(false);
 
-        // We only want to keep the 3 newest reports.
-        foreach (var file in files
-                 .Where(x => x.Name.StartsWith(traceInstallationsReportFileName, false, CultureInfo.InvariantCulture))
-                 .OrderBy(x => x.Created).Take(files.Count() - 3))
+        var reportFiles = files.Where(x => x.Name.StartsWith(traceInstallationsReportFileName, false, CultureInfo.InvariantCulture)).ToArray();
+
+       // We only want to keep the 3 newest reports.
+        foreach (var file in reportFiles.OrderBy(x => x.Created).Take(reportFiles.Length - 3))
         {
-            _logger.LogInformation("Cleanup old reporting files {FileName}.", file.Name);
+            _logger.LogInformation("Cleanup old reporting file {FileName}.", file.Name);
             await httpFileServer
                 .DeleteResource(file.Name, _setting.UploadPath)
                 .ConfigureAwait(false);
