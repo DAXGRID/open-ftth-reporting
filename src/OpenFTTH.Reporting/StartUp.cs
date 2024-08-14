@@ -91,7 +91,8 @@ internal sealed class StartUp
             new Uri(_setting.FileServer.HostAddress));
 
         _logger.LogInformation(
-            "Creating directory on fileserver {DirectoryName}.", _setting.UploadPath);
+            "Creating directory {DirectoryName} on the fileserver if it does not already exist.",
+            _setting.UploadPath);
 
         await httpFileServer
             .CreateDirectory(
