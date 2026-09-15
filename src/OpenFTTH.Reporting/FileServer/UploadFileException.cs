@@ -1,6 +1,6 @@
 namespace OpenFTTH.Reporting.FileServer;
 
-public class UploadFileException : Exception
+internal sealed class UploadFileException : Exception
 {
     public UploadFileException()
     {

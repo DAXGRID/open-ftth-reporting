@@ -1,6 +1,6 @@
 namespace OpenFTTH.Reporting.FileServer;
 
-public class DeleteFileException : Exception
+internal sealed class DeleteFileException : Exception
 {
     public DeleteFileException()
     {

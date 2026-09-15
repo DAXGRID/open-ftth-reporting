@@ -21,3 +21,6 @@ dotnet_diagnostic.IDE0005.severity = warning
 
 # CA2234: We don't care since we most often will use BaseAddress for HttpClient
 dotnet_diagnostic.CA2234.severity = none
+
+# CA1873: We won't disable logging.
+dotnet_diagnostic.CA1873.severity = none

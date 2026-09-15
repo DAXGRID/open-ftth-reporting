@@ -1,5 +1,5 @@
 ARG PROJECT_NAME=OpenFTTH.Reporting
-ARG DOTNET_VERSION=8.0
+ARG DOTNET_VERSION=10.0
 
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_VERSION} AS build-env
 
@@ -19,7 +19,7 @@ WORKDIR /app/src/${PROJECT_NAME}
 RUN dotnet publish -c Release -o out --packages ./packages
 
 # Build runtime image
-FROM mcr.microsoft.com/dotnet/runtime:${DOTNET_VERSION}-jammy-amd64
+FROM mcr.microsoft.com/dotnet/runtime:${DOTNET_VERSION}
 
 # Renew the ARG argument for it to be available in this build context.
 ARG PROJECT_NAME

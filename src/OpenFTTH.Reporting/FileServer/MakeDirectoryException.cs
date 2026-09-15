@@ -1,6 +1,6 @@
 namespace OpenFTTH.Reporting.FileServer;
 
-public class MakeDirectoryException : Exception
+internal sealed class MakeDirectoryException : Exception
 {
     public MakeDirectoryException()
     {

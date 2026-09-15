@@ -71,7 +71,7 @@ internal sealed class StartUp
         using (var fs = new FileStream(zipFilePath,FileMode.Create))
         using (var arch = new ZipArchive(fs, ZipArchiveMode.Create))
         {
-            arch.CreateEntryFromFile(csvFilePath, Path.GetFileName(csvFilePath));
+            await arch.CreateEntryFromFileAsync(csvFilePath, Path.GetFileName(csvFilePath)).ConfigureAwait(false);
         }
 
         using var httpClientHandler = new HttpClientHandler
