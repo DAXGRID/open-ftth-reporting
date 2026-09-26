@@ -9,7 +9,7 @@ executors:
         password: $DOCKER_ACCESSTOKEN
   docker-publisher:
     environment:
-      IMAGE_NAME: openftth/reporting
+      IMAGE_NAME: daxgrid/reporting
     docker:
       - image: cimg/base:current
         auth:
