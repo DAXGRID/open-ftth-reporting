@@ -26,6 +26,8 @@ ARG PROJECT_NAME
 
 WORKDIR /app
 
-COPY --from=build-env /app/src/${PROJECT_NAME}/out .
+COPY --from=build-env --chown=app:app /app/src/${PROJECT_NAME}/out .
+
+USER app
 
 ENTRYPOINT ["dotnet", "OpenFTTH.Reporting.dll"]
